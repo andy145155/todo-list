@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig to read more about this file */
+    "target": "es2019",
+    "module": "commonjs",
+    "outDir": "./dict/",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": false,
+    "strict": true,
+    "skipLibCheck": true,
+  }
+}
