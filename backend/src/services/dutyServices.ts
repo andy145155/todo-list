@@ -6,9 +6,12 @@ import {
   dutyCreateSchema,
   dutySchema,
 } from "../utils/schema";
-import { DB_TABLE } from "../utils/constant";
 import { AppError } from "../utils/AppError";
 import z from "zod";
+
+export const DB_TABLE = {
+  DUTIES: "duties",
+};
 
 export const getDuties = async (): Promise<Duty[]> => {
   const { rows } = await pool.query(`SELECT * FROM ${DB_TABLE.DUTIES}`);
