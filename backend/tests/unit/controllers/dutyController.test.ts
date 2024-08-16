@@ -7,16 +7,19 @@ import {
   updateDutyById,
   deleteDutyById,
 } from "../../../src/controllers/dutyController";
+import { Pool } from "pg";
 
 jest.mock("../../../src/services/dutyServices");
+
+const pool = new Pool();
 
 const app = express();
 app.use(express.json());
 
-app.get("/duties", getAllDuties);
-app.post("/duties", createNewDuty);
-app.put("/duties/:id", updateDutyById);
-app.delete("/duties/:id", deleteDutyById);
+app.get("/duties", getAllDuties(pool));
+app.post("/duties", createNewDuty(pool));
+app.put("/duties/:id", updateDutyById(pool));
+app.delete("/duties/:id", deleteDutyById(pool));
 
 describe("Duty Controller", () => {
   describe("GET /duties", () => {

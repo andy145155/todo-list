@@ -5,65 +5,67 @@ import {
   updateDuty,
   deleteDuty,
 } from "../services/dutyServices";
+import { Pool } from "pg";
+import { AppError } from "../utils/AppError";
 
-export const getAllDuties = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const duties = await getDuties();
-    res.json(duties);
-  } catch (error) {
-    next(error);
-  }
+export const getAllDuties = (pool: Pool) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const duties = await getDuties(pool);
+      res.json(duties);
+    } catch (error) {
+      next(error);
+    }
+  };
 };
 
-export const createNewDuty = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const duty = await createDuty(req.body);
-    res.status(201).json(duty);
-  } catch (error) {
-    next(error);
-  }
+export const createNewDuty = (pool: Pool) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const duty = await createDuty(pool, req.body);
+      res.status(201).json(duty);
+    } catch (error) {
+      next(error);
+    }
+  };
 };
 
-export const updateDutyById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const id = parseInt(req.params.id, 10);
-    const duty = await updateDuty(id, req.body);
-    if (duty) {
+export const updateDutyById = (pool: Pool) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = parseInt(req.params.id, 10);
+      const duty = await updateDuty(pool, id, req.body);
+
+      if (!duty) {
+        return res
+          .status(404)
+          .json({ status: "fail", message: "Duty not found" });
+      }
+
       res.json(duty);
-    } else {
-      res.status(404).json({ message: "Duty not found" });
+    } catch (error) {
+      if (error instanceof AppError && error.statusCode === 404) {
+        // Handle AppError with 404 status explicitly
+        res.status(404).json({ status: "fail", message: error.message });
+      } else {
+        next(error); // Pass any other errors to the global error handler (500)
+      }
     }
-  } catch (error) {
-    next(error);
-  }
+  };
 };
 
-export const deleteDutyById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const id = parseInt(req.params.id, 10);
-    const success = await deleteDuty(id);
-    if (success) {
-      res.status(204).send();
-    } else {
-      res.status(404).json({ message: "Duty not found" });
+export const deleteDutyById = (pool: Pool) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = parseInt(req.params.id, 10);
+      const success = await deleteDuty(pool, id);
+      if (success) {
+        res.status(204).send();
+      } else {
+        res.status(404).json({ message: "Duty not found" });
+      }
+    } catch (error) {
+      next(error);
     }
-  } catch (error) {
-    next(error);
-  }
+  };
 };

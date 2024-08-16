@@ -5,12 +5,17 @@ import {
   updateDutyById,
   deleteDutyById,
 } from "../controllers/dutyController";
+import { Pool } from "pg";
 
-const router = Router();
+const dutyRoutes = (pool: Pool) => {
+  const router = Router();
 
-router.get("/duties", getAllDuties);
-router.post("/duties", createNewDuty);
-router.put("/duties/:id", updateDutyById);
-router.delete("/duties/:id", deleteDutyById);
+  router.get("/duties", getAllDuties(pool));
+  router.post("/duties", createNewDuty(pool));
+  router.put("/duties/:id", updateDutyById(pool));
+  router.delete("/duties/:id", deleteDutyById(pool));
 
-export default router;
+  return router;
+};
+
+export default dutyRoutes;

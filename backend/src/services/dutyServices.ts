@@ -1,4 +1,3 @@
-import pool from "../utils/db";
 import {
   Duty,
   dutyArraySchema,
@@ -8,15 +7,16 @@ import {
 } from "../utils/schema";
 import { AppError } from "../utils/AppError";
 import z from "zod";
+import { Pool } from "pg";
 
-export const DB_TABLE = {
+const DB_TABLE = {
   DUTIES: "duties",
 };
 
-export const getDuties = async (): Promise<Duty[]> => {
-  const { rows } = await pool.query(`SELECT * FROM ${DB_TABLE.DUTIES}`);
-
+export const getDuties = async (pool: Pool): Promise<Duty[]> => {
   try {
+    const { rows } = await pool.query(`SELECT * FROM ${DB_TABLE.DUTIES}`);
+
     const duties = dutyArraySchema.parse(rows);
     return duties;
   } catch (error) {
@@ -32,13 +32,16 @@ export const getDuties = async (): Promise<Duty[]> => {
   }
 };
 
-export const createDuty = async (duty: DutyCreate): Promise<Duty> => {
+export const createDuty = async (
+  pool: Pool,
+  duty: DutyCreate,
+): Promise<Duty> => {
   try {
     // Validate input before performing the operation
     const validatedDuty = dutyCreateSchema.parse(duty);
 
     const { rows } = await pool.query(
-      "INSERT INTO duties (name) VALUES ($1) RETURNING *",
+      `INSERT INTO ${DB_TABLE.DUTIES} (name) VALUES ($1) RETURNING *`,
       [validatedDuty.name],
     );
 
@@ -57,6 +60,7 @@ export const createDuty = async (duty: DutyCreate): Promise<Duty> => {
 };
 
 export const updateDuty = async (
+  pool: Pool,
   id: number,
   duty: DutyCreate,
 ): Promise<Duty | null> => {
@@ -64,7 +68,7 @@ export const updateDuty = async (
     const validatedDuty = dutyCreateSchema.parse(duty);
 
     const { rows } = await pool.query(
-      "UPDATE duties SET name = $1 WHERE id = $2 RETURNING *",
+      `UPDATE ${DB_TABLE.DUTIES} SET name = $1 WHERE id = $2 RETURNING *`,
       [validatedDuty.name, id],
     );
 
@@ -77,6 +81,8 @@ export const updateDuty = async (
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw new AppError(`Validation error: ${error.message}`, 400);
+    } else if (error instanceof AppError) {
+      throw error;
     } else if (error instanceof Error) {
       throw new AppError(`Unexpected error: ${error.message}`, 500);
     } else {
@@ -85,11 +91,12 @@ export const updateDuty = async (
   }
 };
 
-export const deleteDuty = async (id: number): Promise<boolean> => {
+export const deleteDuty = async (pool: Pool, id: number): Promise<boolean> => {
   try {
-    const { rowCount } = await pool.query("DELETE FROM duties WHERE id = $1", [
-      id,
-    ]);
+    const { rowCount } = await pool.query(
+      `DELETE FROM ${DB_TABLE.DUTIES} WHERE id = $1`,
+      [id],
+    );
 
     if (rowCount === 0) {
       throw new AppError("Duty not found", 404);
@@ -97,7 +104,11 @@ export const deleteDuty = async (id: number): Promise<boolean> => {
 
     return true;
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof z.ZodError) {
+      throw new AppError(`Validation error: ${error.message}`, 400);
+    } else if (error instanceof AppError) {
+      throw error;
+    } else if (error instanceof Error) {
       throw new AppError(`Unexpected error: ${error.message}`, 500);
     } else {
       throw new AppError("An unexpected error occurred", 500);
