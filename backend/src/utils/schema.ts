@@ -14,7 +14,7 @@ export type Duty = z.infer<typeof dutySchema>;
 
 // Create schema represents the shape of the data that we expect to receive from the client
 export const dutyCreateSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().min(1).max(255, "Name cannot be longer than 255 characters"),
 });
 
 export type DutyCreate = z.infer<typeof dutyCreateSchema>;
