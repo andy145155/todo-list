@@ -61,7 +61,7 @@ Once you have the container up and running:
 2. **Run the app**:
    To start both backend and frontend services, run:
 
-  ```bash
+   ```bash
    docker-compose up --build
    ```
 
@@ -98,8 +98,14 @@ Navigate to the frontend directory and run:
 
 Below are screenshots of the main user interface.
 
-Todo List Page: This is the main page where you can view the list of todos. You can add, update, or delete tasks from here.
+- **Todo List Page**: This is the main page where you can view the list of todos. You can add, update, or delete tasks from here.
 
-Add New Task: This shows the form for adding a new task to the todo list.
+![Todo List Page](./screenshots/todo_list_page.png)
 
-Update Task: A modal that appears when you click the "Update" button to change the task name.
+- **Add New Task**: This shows the form for adding a new task to the todo list.
+
+![Add New Task](./screenshots/add_new_task.png)
+
+- **Update Task**: A modal that appears when you click the "Update" button to change the task name.
+
+![Update Task](./screenshots/update_task.png)
