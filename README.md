@@ -2,6 +2,11 @@
 
 This project is a full-stack Todo List application built with a **Node.js** backend using **Express** and a **React** frontend with **TypeScript**. The backend uses **PostgreSQL** as the database and **Ant Design** is used for the frontend components.
 
+<p align="center">
+  <img src="./screenshots/todo_list_page.png" alt="Todo List Page" width="400"/>
+</p>
+
+
 ## Features
 
 - **Create**, **Read**, **Update**, and **Delete** (CRUD) operations for todo items.
@@ -100,12 +105,18 @@ Below are screenshots of the main user interface.
 
 - **Todo List Page**: This is the main page where you can view the list of todos. You can add, update, or delete tasks from here.
 
-![Todo List Page](./screenshots/todo_list_page.png)
+<p align="center">
+  <img src="./screenshots/todo_list_page.png" alt="Todo List Page" width="400"/>
+</p>
 
 - **Add New Task**: This shows the form for adding a new task to the todo list.
 
-![Add New Task](./screenshots/add_new_task.png)
+<p align="center">
+  <img src="./screenshots/add_new_task.png" alt="Add New Task" width="400"/>
+</p>
 
 - **Update Task**: A modal that appears when you click the "Update" button to change the task name.
 
-![Update Task](./screenshots/update_task.png)
+<p align="center">
+  <img src="./screenshots/update_task.png" alt="Update Task" width="400"/>
+</p>
