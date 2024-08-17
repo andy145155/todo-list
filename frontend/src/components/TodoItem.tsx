@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { List, Button, Modal, Input, Form } from "antd";
+import { List, Button, Modal, Input, Form, message } from "antd";
 import { Duty } from "../schema/duty";
 import { formatDate } from "../utils/formatData";
 
@@ -16,16 +16,19 @@ const TodoItem: FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
 
   const showModal = () => {
     setIsModalVisible(true);
-    form.setFieldsValue({ name: todo.name }); // Set initial value
+
+    // Set initial value
+    form.setFieldsValue({ name: todo.name });
   };
 
   const handleOk = async () => {
     try {
       setIsUpdating(true);
-      const values = await form.validateFields(); // Validate form fields
-      await onUpdate(todo.id, values.name); // Use form values for the update
-      setIsModalVisible(false); // Close modal on success
+      const values = await form.validateFields();
+      await onUpdate(todo.id, values.name);
+      setIsModalVisible(false);
     } catch (error) {
+      message.error("Failed to update todo. Please try again.");
       console.error("Failed to update todo:", error);
     } finally {
       setIsUpdating(false);
